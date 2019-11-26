@@ -1,4 +1,4 @@
-﻿//3
+﻿//Номер 3
 
 #include <stdio.h>
 #include <conio.h>
