@@ -8,93 +8,12 @@
 
 using namespace std;
 
-ifstream fin;
-ofstream fout;
-
 string path = "data.txt";
-bool authorization();
 
 void menu();
 //void auth();
 void reg();
 
-
-void readFromFile(string& nameCheck, string& passCheck)
-{
-	ifstream fin;
-	try
-	{
-		fin.open(path);
-		cout << "Read is succsessful!" << endl << endl;
-		getline(fin, nameCheck);
-		getline(fin, passCheck);
-	}
-	catch (const std::exception&)
-	{
-		cout << "Ошибка открытия файла" << endl;
-	}
-}
-bool check(string name, string pass)
-{
-	string nameCheck, passCheck;
-	readFromFile(nameCheck, passCheck);
-	if (name != nameCheck)
-	{
-		cout << "Такого пользователя не сушествует" << endl;
-		authorization();
-		return false;
-	}
-	else if (pass != passCheck)
-	{
-		cout << "Пароль введён невено" << endl;
-		authorization();
-		return false;
-	}
-	else
-	{
-		cout << "Вы успешно авторизовались" << endl;
-		return true;
-	}
-
-}
-
-bool auth()
-{
-	string name, pass;
-
-	cout << "Авторизация: " << endl;
-	cout << "Введите логин" << endl;
-	cin >> name;
-	cout << "Введите пароль" << endl;
-
-	for (;;) {
-		auto code = _getch();
-		if (code == 13)
-		{
-			cout << endl;
-			break;  // если энтер
-		}
-
-		if (code == 224)
-			_getch(),
-			code = 8;
-
-		if (code == 8)
-		{
-			std::cout << "\b \b";
-			if (!pass.empty())
-				pass.pop_back();
-		}
-		else
-		{
-			const auto ch = static_cast<char>(code);
-			pass += ch;
-			std::cout << "*";
-		}
-	}
-
-	return check(name, pass);
-}
 
 int ans() {
 	int choice = 0;
@@ -186,7 +105,7 @@ void menu0() {
 		reg();
 		break;
 	case 1:
-		auth();
+		//auth();
 		break;
 	case 2:
 		menu();
