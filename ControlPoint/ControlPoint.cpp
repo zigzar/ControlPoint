@@ -8,12 +8,115 @@
 
 using namespace std;
 
+ifstream fin;
+ofstream fout;
+
 string path = "data.txt";
 
-void menu();
-//void auth();
-void reg();
+bool isAuth = false;
 
+void menu();
+bool auth();
+
+void readFromFile(string& nameCheck, string& passCheck)
+{
+	ifstream fin;
+	try
+	{
+		fin.open(path);
+		getline(fin, nameCheck);
+		getline(fin, passCheck);
+	}
+	catch (const std::exception&)
+	{
+		cout << "Ошибка открытия файла" << endl;
+	}
+}
+void writeToFile(string name, string pass)
+{
+	ofstream fout;
+	try
+	{
+		fout.open(path);
+		fout << name << endl << pass;
+	}
+	catch (const std::exception&)
+	{
+		cout << "Ошибка открытия файла" << endl;
+	}
+}
+void reg()
+{
+	cout << "Регистрация: " << endl;
+	cout << "Введите Логин" << endl;
+	string login;
+	cin >> login;
+	cout << "Введите пароль" << endl;
+	string pass;
+	cin >> pass;
+	writeToFile(login, pass);
+}
+bool check(string name, string pass)
+{
+	string nameCheck, passCheck;
+	readFromFile(nameCheck, passCheck);
+	if (name != nameCheck)
+	{
+		cout << "Такого пользователя не существует" << endl;
+		auth();
+		return false;
+	}
+	if (pass != passCheck)
+	{
+		cout << "Пароль введён невено" << endl;
+		auth();
+		return false;
+	}
+	if (name == nameCheck && pass == passCheck)
+	{
+		cout << "Вы успешно авторизовались" << endl;
+		Sleep(1000);
+		return true;
+	}
+
+}
+bool auth()
+{
+	string name, pass;
+
+	cout << "Авторизация: " << endl;
+	cout << "Введите логин" << endl;
+	cin >> name;
+	cout << "Введите пароль" << endl;
+
+	while (true) {
+		auto code = _getch();
+		if (code == 13)
+		{
+			cout << endl;
+			break;
+		}
+
+		if (code == 224)
+			_getch(),
+			code = 8;
+
+		if (code == 8)
+		{
+			std::cout << "\b \b";
+			if (!pass.empty())
+				pass.pop_back();
+		}
+		else
+		{
+			const auto ch = static_cast<char>(code);
+			pass += ch;
+			std::cout << "*";
+		}
+	}
+
+	return check(name, pass);
+}
 
 int ans() {
 	int choice = 0;
@@ -94,7 +197,6 @@ int ans0() {
 	return choice;
 }
 
-
 void menu0() {
 	while (true)
 	{
@@ -105,7 +207,7 @@ void menu0() {
 		reg();
 		break;
 	case 1:
-		//auth();
+		isAuth = auth();
 		break;
 	case 2:
 		menu();
@@ -117,7 +219,6 @@ void menu0() {
 void menu1() {}
 void menu2() {}
 void menu3() {}
-
 void menu() {
 	int answer = ans();
 	switch (answer)
@@ -144,28 +245,3 @@ int main() {
 	menu();
 }
 
-void writeToFile(string name, string pass)
-{
-	ofstream fout;
-	try
-	{
-		fout.open(path);
-		fout << name << endl << pass;
-	}
-	catch (const std::exception&)
-	{
-		cout << "Ошибка открытия файла" << endl;
-	}
-}
-
-void reg()
-{
-	cout << "Регистрация: " << endl;
-	cout << "Введите Логин" << endl;
-	string login;
-	cin >> login;
-	cout << "Введите пароль" << endl;
-	string pass;
-	cin >> pass;
-	writeToFile(login, pass);
-}
