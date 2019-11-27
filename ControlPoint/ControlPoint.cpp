@@ -63,6 +63,9 @@ void reg()
 	string pass;
 	cin >> pass;
 	writeToFile(login, pass);
+	curLogin = login;
+	curPassword = pass;
+	isAuth = true;
 }
 bool check(string name, string pass)
 {
@@ -190,7 +193,6 @@ void flag1() {
 		cout << "Ошибка открытия файла" << endl;
 	}
 }
-
 void flag2() {
 	ifstream fin;
 	try
@@ -223,6 +225,61 @@ void flag2() {
 	{
 		cout << "Ошибка открытия файла" << endl;
 	}
+}
+
+void getBinGroup() {
+	int i = 32;
+	bool r;
+	r = 9893 & (1U << --i);
+	cout << r << " ";
+	SetConsoleTextAttribute(h, 14);
+	for (--i; i >= 0; --i)
+	{
+		r = 9893 & (1U << i);
+		if (i % 4 == 0)
+		{
+			cout << r << " ";
+		}
+		else
+		{
+			cout << r;
+		}
+	}
+	cout << endl;
+	SetConsoleTextAttribute(h, 15);
+}
+
+void getBinSurname() {
+	string s = "Голяков";
+	int i = 8;
+	bool r;
+
+	for (int txtcolor = 0, ch = 0; ch < s.length(); ch++, txtcolor++)
+	{
+		i = 8;
+		if (txtcolor % 2 == 0) { 
+			SetConsoleTextAttribute(h, 14); 
+		}
+		else {
+			SetConsoleTextAttribute(h, 3);
+		}
+		for (--i; i >= 0; --i)
+		{
+			r = s[ch] & (1U << i);
+			if (i % 4 == 0)
+			{
+				cout << r << " ";
+			}
+			else
+			{
+				cout << r;
+			}
+		}
+		cout << "   ";
+	}
+
+
+	SetConsoleTextAttribute(h, 15);
 }
 
 int ans() {
@@ -304,7 +361,46 @@ int ans0() {
 	return choice;
 }
 int ans1() {
-	return 0;
+	int choice = 0;
+	int options = 4;
+	int ch;
+	while (true) {
+		system("cls");
+		choice = (choice + options) % options;
+
+		cout << "Вы не вошли в систему. Вы можете продолжить в качестве анонима или войти/зарегистрироваться." << endl 
+			<< "____________________________________________________________________________________________" << endl << endl;
+		if (choice == 0) cout << "-> Регистрация в системе" << endl;
+		else  cout << "   Регистрация в системе" << endl;
+
+		if (choice == 1) cout << "-> Авторизация в системе" << endl;
+		else  cout << "   Авторизация в системе" << endl;
+
+		if (choice == 2) cout << "-> Продолжить без авторизации" << endl;
+		else  cout << "   Продолжить без авторизации" << endl;
+
+		if (choice == 3) cout << "-> Назад" << endl;
+		else  cout << "   Назад" << endl;
+
+		ch = _getch();
+		if (ch == 224)
+		{
+			ch = _getch();
+			if (ch == 80) choice++;
+			if (ch == 72) choice--;
+		}
+		if (ch == 119)
+		{
+			choice--;
+		}
+		if (ch == 115)
+		{
+			choice++;
+		}
+		if (ch == 13) break;
+	}
+	system("cls");
+	return choice;
 }
 
 void menu0() {
@@ -318,45 +414,52 @@ void menu0() {
 		break;
 	case 1:
 		isAuth = auth();
-		menu();
-		break;
-	case 2:
-		menu();
 		break;
 	}
+	menu();
 	}
 
 }
 void menu1() {
-	if (isAuth) {}
-	int answer = ans1();
-	switch (answer)
-	{
-	case 0:
-		menu0();
-		break;
-	case 1:
-		menu1();
-		break;
-	case 2:
-		//menu2();
-		break;
-	case 3:
-		if (isAuth)
-		{
-			flag1();
-			flag2();
-			menu();
+	if (isAuth) {
+		cout << "Приветствую тебя, " << curLogin << ". На улице такая вьюга. Присаживайся у очага, здесь тебе всегда рады." << endl;
+		cout << "Эту программу написал студент группы 9893, Максим Голяков. Кстати, в памяти моего компьютера номер мой группы выглядит как:" << endl;
+		getBinGroup();
+		cout << "А фамилия как:" << endl;
+		getBinSurname();
+		cout << endl;
+		cout << "ESC для выхода в главное меню...";
+		char code = _getch();
+		while (!(code == 27)) {
+			code = _getch();
 		}
-		else {
-			cout << "Вы не авторизованы. Пожалуйста, выполните вход в систему или зарегистрируйтесь!";
-			Sleep(1500);
-			menu0();
-		}
-		break;
-	case 4:
-		exit(0);
 	}
+	else {
+		int answer = ans1();
+		switch (answer)
+		{
+		case 0:
+			reg();
+			break;
+		case 1:
+			isAuth = auth();
+			break;
+		case 2:
+			cout << "Приветствую тебя, пользователь N. На улице такая вьюга. Присаживайся у очага, здесь тебе всегда рады." << endl;
+			cout << "Эту программу написал студент группы 9893, Максим Голяков. Кстати, в памяти моего компьютера номер мой группы выглядит как:" << endl;
+			getBinGroup();
+			cout << "А фамилия как:" << endl;
+			getBinSurname();
+			cout << endl;
+			cout << "ESC для выхода в главное меню...";
+			char code = _getch();
+			while (!(code == 27)) {
+				code = _getch();
+			}
+			break;
+		}
+	}
+	menu();
 }
 void menu2() {}
 void menu3() {}
