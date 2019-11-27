@@ -358,6 +358,47 @@ void fibbCheck(int* arr, int size)
 	}
 }
 
+void medium(int* arr, int size) {
+	int sum = 0;
+	for (int i = 0; i < size; i++)
+	{
+		sum = sum + arr[i];
+	}
+	int medium = sum / size;
+	cout << "Среднее всех элементов массива: " << medium << endl;
+}
+
+void mediana(int* arr, int size) {
+	int mediana;
+	switch (size%2)
+	{
+	case 0:
+		mediana = (arr[size / 2 - 1] + arr[size / 2]) / 2;
+		break;
+	case 1:
+		mediana = arr[size / 2];
+		break;
+	}
+	cout << "Медиана массива: " << mediana << endl;
+}
+
+void moda(int* arr, int size) {
+	int rmax = 0, max = arr[0], cmax = 0;
+
+	for (int i = 0; i < size; i++)
+	{
+		if (cmax > rmax)
+		{
+			rmax = cmax;
+			max = arr[i - 1];
+		}
+		cmax = 0;
+		for (int j = i; j < size; j++)
+			if (arr[j] == arr[i])
+				cmax++;
+	}
+	cout << "Мода массива: " << max << ". Это число встретилось " << rmax << " раз" << endl;
+}
 
 void bs(int* arr, int size)
 {
@@ -526,6 +567,9 @@ void menu2()
 	showarr(arr, size);
 	cout << endl << endl;
 	fibbCheck(arr, size);
+	medium(arr, size);
+	moda(arr, size);
+	mediana(arr, size);
 
 	cout << "ESC для выхода в главное меню...";
 	char code = _getch();
