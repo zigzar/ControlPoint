@@ -315,22 +315,22 @@ void manual(int* arr, int size)
 void file(int* arr, int size)
 {
 	ifstream fin;
-	fin.open(patharr);
-	if (!fin.is_open())
+	try
 	{
-		cout << "Ошибка открытия файла" << endl;
-	}
-	else
-	{
+		fin.open(patharr);
 		for (int i = 0; i < size; i++)
 		{
 			if (fin.eof()) {
-				cout << "Введите больше числе в файл и нажмите Enter" << endl;
+				cout << "В файле недостаточно чисел. Пожалуйста, введите больше чисел в файл и нажмите Enter" << endl;
 				system("pause");
 				file(arr, size);
 			}
 			fin >> arr[i];
 		}
+	}
+	catch (const std::exception&)
+	{
+		cout << "Ошибка открытия файла" << endl;
 	}
 }
 
@@ -351,10 +351,10 @@ void fibbCheck(int* arr, int size)
 		if (f2 == arr[i]) count++;
 	}
 	if (count == 0) {
-		cout << "Чисел фиббоначи среди массива нет";
+		cout << "Чисел Фибоначчи среди массива нет";
 	}
 	else {
-		cout << "Из " << size << " элементов массива числами Фиббоначи являются " << count << " и не являются " << size - count << endl;
+		cout << "Из " << size << " элементов массива числами Фибоначчи являются " << count << " и не являются " << size - count << endl;
 	}
 }
 
@@ -471,7 +471,6 @@ void menu2()
 	cin >> size;
 	int* arr = new int[size];
 
-	string type = "massives";
 	int answer = ans2();
 
 	switch (answer)
@@ -494,7 +493,6 @@ void menu2()
 	cout << endl;
 	system("pause");
 
-	type = "sort";
 	answer = ans3();
 
 	auto timerStart = chrono::high_resolution_clock::now();
@@ -522,12 +520,18 @@ void menu2()
 	chrono::duration<double, nano>;
 	double timerDur = (timerEnd - timerStart).count();
 	cout.setf(ios::fixed);
-	cout << "\nВремя работы быстрой сортировки: " << timerDur / 1000000 << " сек";
+	cout << endl << "Время работы сортировки: " << timerDur / 1000000 << " сек" << endl;
 
-	cout << "Отсортиованный массив: ";
+	cout << "Отсортированный массив: ";
 	showarr(arr, size);
-	cout << endl;
+	cout << endl << endl;
 	fibbCheck(arr, size);
+
+	cout << "ESC для выхода в главное меню...";
+	char code = _getch();
+	while (!(code == 27)) {
+		code = _getch();
+	}
 	menu();
 
 	delete[] arr;
@@ -653,8 +657,88 @@ int ans1() {
 	system("cls");
 	return choice;
 }
-int ans2() { return 0; }
-int ans3() { return 0; }
+int ans3() {
+	int choice = 0;
+	int options = 5;
+	int ch;
+	while (true) {
+		system("cls");
+		cout << "Какой сортировкой вы хотите отсортировать массив? (ESC для выхода в главное меню)" << endl << endl;
+		choice = (choice + options) % options;
+		if (choice == 0) cout << "-> Bubble" << endl;
+		else  cout << "   Bubble" << endl;
+
+		if (choice == 1) cout << "-> Shaker" << endl;
+		else  cout << "   Shaker" << endl;
+
+		if (choice == 2) cout << "-> Comb" << endl;
+		else  cout << "   Comb" << endl;
+
+		if (choice == 3) cout << "-> Insert" << endl;
+		else  cout << "   Insert" << endl;
+
+		if (choice == 4) cout << "-> Quick" << endl;
+		else  cout << "   Quick" << endl;
+
+		ch = _getch();
+		if (ch == 224)
+		{
+			ch = _getch();
+			if (ch == 80) choice++;
+			if (ch == 72) choice--;
+		}
+		if (ch == 119)
+		{
+			choice--;
+		}
+		if (ch == 115)
+		{
+			choice++;
+		}
+		if (ch == 27) menu();
+		if (ch == 13) break;
+	}
+	system("cls");
+	return choice;
+}
+int ans2() {
+	int choice = 0;
+	int options = 3;
+	int ch;
+	while (true) {
+		system("cls");
+		cout << "Как вы хотите запонить массив? (ESC для выхода в главное меню)" << endl << endl;
+		choice = (choice + options) % options;
+		if (choice == 0) cout << "-> Случайно" << endl;
+		else  cout << "   Случайно" << endl;
+
+		if (choice == 1) cout << "-> Вручную" << endl;
+		else  cout << "   Вручную" << endl;
+
+		if (choice == 2) cout << "-> Прочитать из файла" << endl;
+		else  cout << "   Прочитать из файла" << endl;
+
+		ch = _getch();
+		if (ch == 224)
+		{
+			ch = _getch();
+			if (ch == 80) choice++;
+			if (ch == 72) choice--;
+		}
+		if (ch == 119)
+		{
+			choice--;
+		}
+		if (ch == 115)
+		{
+			choice++;
+		}
+		if (ch == 27) menu();
+		if (ch == 13) break;
+	}
+	system("cls");
+	return choice;
+}
 
 void menu0() {
 	while (true)
