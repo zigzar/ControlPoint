@@ -4,6 +4,8 @@
 #include <windows.h>
 #include <string>
 #include <fstream>
+#include <ctime>
+#include <chrono>
 
 
 using namespace std;
@@ -14,6 +16,7 @@ ifstream fin;
 ofstream fout;
 
 string path = "data.txt";
+string patharr = "array.txt";
 
 bool isAuth = false;
 
@@ -23,6 +26,8 @@ string curPassword;
 void menu();
 void menu0();
 bool auth();
+int ans2();
+int ans3();
 
 void readFromFile(string& nameCheck, string& passCheck)
 {
@@ -248,7 +253,6 @@ void getBinGroup() {
 	cout << endl;
 	SetConsoleTextAttribute(h, 15);
 }
-
 void getBinSurname() {
 	string s = "Голяков";
 	int i = 8;
@@ -280,6 +284,253 @@ void getBinSurname() {
 
 
 	SetConsoleTextAttribute(h, 15);
+}
+
+void showarr(int* arr, int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		cout << arr[i] << " ";
+	}
+}
+
+void random(int* arr, int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		arr[i] = rand() % 100 + 1;
+	}
+}
+
+void manual(int* arr, int size)
+{
+	cout << "Введите значения: ";
+	for (int i = 0; i < size; i++)
+	{
+		cout << "Введите arr[" << i << "] ";
+		cin >> arr[i];
+	}
+}
+
+void file(int* arr, int size)
+{
+	ifstream fin;
+	fin.open(patharr);
+	if (!fin.is_open())
+	{
+		cout << "Ошибка открытия файла" << endl;
+	}
+	else
+	{
+		for (int i = 0; i < size; i++)
+		{
+			if (fin.eof()) {
+				cout << "Введите больше числе в файл и нажмите Enter" << endl;
+				system("pause");
+				file(arr, size);
+			}
+			fin >> arr[i];
+		}
+	}
+}
+
+void fibbCheck(int* arr, int size)
+{
+	int count = 0;
+	if (size > 15) {
+		size = 15;
+	}
+	for (int i = 0; i < size; i++)
+	{
+		int f1 = 1, f2 = 1, it = 2;
+		while (f2 < arr[i]) {
+			int tmp = f2;
+			f2 += f1;
+			f1 = tmp;
+		}
+		if (f2 == arr[i]) count++;
+	}
+	if (count == 0) {
+		cout << "Чисел фиббоначи среди массива нет";
+	}
+	else {
+		cout << "Из " << size << " элементов массива числами Фиббоначи являются " << count << " и не являются " << size - count << endl;
+	}
+}
+
+
+void bs(int* arr, int size)
+{
+	for (int i = 0; i < size - 1; i++) {
+		for (int j = 0; j < size - i - 1; j++) {
+			if (arr[j] > arr[j + 1]) {
+				swap(arr[j], arr[j + 1]);
+			}
+		}
+	}
+}
+void shs(int* arr, int size)
+{
+	int left = 0, right = size - 1;
+	int flag = 1;
+
+	while ((left < right) && flag > 0)
+	{
+		flag = 0;
+		for (int i = left; i < right; i++)
+		{
+			if (arr[i] > arr[i + 1])
+			{
+				swap(arr[i], arr[i + 1]);
+				flag = 1;
+			}
+		}
+		right--;
+		for (int i = right; i > left; i--)
+		{
+			if (arr[i - 1] > arr[i])
+			{
+				swap(arr[i], arr[i - 1]);
+				flag = 1;
+			}
+		}
+		left++;
+	}
+}
+void cs(int* arr, int size)
+{
+	int gap = size;
+	bool flag = true;
+
+	while (gap != 1 || flag == true) {
+		gap = (gap * 10) / 13;
+		if (gap < 1)
+			gap = 1;
+		flag = false;
+
+		for (int i = 0; i < size - gap; i++) {
+			if (arr[i] > arr[i + gap]) {
+				swap(arr[i], arr[i + gap]);
+				flag = true;
+			}
+		}
+	}
+}
+void is(int* arr, int size)
+{
+	int key;
+	for (int i = 1; i < size; i++)
+	{
+		key = arr[i];
+		int j = i - 1;
+
+		while (j >= 0 && arr[j] > key)
+		{
+			arr[j + 1] = arr[j];
+			j = j - 1;
+		}
+		arr[j + 1] = key;
+	}
+}
+void qs(int* arr, int size)
+{
+	int i = 0;
+	int j = size - 1;
+
+	int mid = arr[size / 2];
+
+	do {
+		while (arr[i] < mid) {
+			i++;
+		}
+		while (arr[j] > mid) {
+			j--;
+		}
+		if (i <= j) {
+			int tmp = arr[i];
+			arr[i] = arr[j];
+			arr[j] = tmp;
+
+			i++;
+			j--;
+		}
+	} while (i <= j);
+
+	if (j > 0) {
+		qs(arr, j + 1);
+	}
+	if (i < size) {
+		qs(&arr[i], size - i);
+	}
+}
+
+void menu2()
+{
+	int size;
+	cout << "Введите размерность массива" << endl;
+	cin >> size;
+	int* arr = new int[size];
+
+	string type = "massives";
+	int answer = ans2();
+
+	switch (answer)
+	{
+	case 0:
+		random(arr, size);
+		break;
+	case 1:
+		manual(arr, size);
+		break;
+	case 2:
+		file(arr, size);
+		break;
+	default:
+		break;
+	}
+
+	cout << "Ваш массив: ";
+	showarr(arr, size);
+	cout << endl;
+	system("pause");
+
+	type = "sort";
+	answer = ans3();
+
+	auto timerStart = chrono::high_resolution_clock::now();
+	switch (answer)
+	{
+	case 0:
+		bs(arr, size);
+		break;
+	case 1:
+		shs(arr, size);
+		break;
+	case 2:
+		cs(arr, size);
+		break;
+	case 3:
+		is(arr, size);
+		break;
+	case 4:
+		qs(arr, size);
+		break;
+	default:
+		break;
+	}
+	auto timerEnd = chrono::high_resolution_clock::now();
+	chrono::duration<double, nano>;
+	double timerDur = (timerEnd - timerStart).count();
+	cout.setf(ios::fixed);
+	cout << "\nВремя работы быстрой сортировки: " << timerDur / 1000000 << " сек";
+
+	cout << "Отсортиованный массив: ";
+	showarr(arr, size);
+	cout << endl;
+	fibbCheck(arr, size);
+	menu();
+
+	delete[] arr;
 }
 
 int ans() {
@@ -402,6 +653,8 @@ int ans1() {
 	system("cls");
 	return choice;
 }
+int ans2() { return 0; }
+int ans3() { return 0; }
 
 void menu0() {
 	while (true)
@@ -461,8 +714,7 @@ void menu1() {
 	}
 	menu();
 }
-void menu2() {}
-void menu3() {}
+
 void menu() {
 	int answer = ans();
 	switch (answer)
@@ -474,7 +726,15 @@ void menu() {
 		menu1();
 		break;
 	case 2:
-		menu2();
+		if (isAuth)
+		{
+			menu2();
+		}
+		else {
+			cout << endl << "Вы не авторизованы. Пожалуйста, выполните вход в систему или зарегистрируйтесь!";
+			Sleep(2000);
+			menu0();
+		}
 		break;
 	case 3:
 		if (isAuth)
@@ -484,8 +744,8 @@ void menu() {
 			menu();
 		}
 		else {
-			cout << "Вы не авторизованы. Пожалуйста, выполните вход в систему или зарегистрируйтесь!";
-			Sleep(1500);
+			cout << endl << "Вы не авторизованы. Пожалуйста, выполните вход в систему или зарегистрируйтесь!";
+			Sleep(2000);
 			menu0();
 		}
 		break;
