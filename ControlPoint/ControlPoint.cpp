@@ -364,7 +364,7 @@ void fibbCheck(int* arr, int size)
 		if (f2 == arr[i]) count++;
 	}
 	if (count == 0) {
-		cout << "Чисел Фибоначчи среди массива нет";
+		cout << "Чисел Фибоначчи среди массива нет" << endl;
 	}
 	else {
 		cout << "Из " << size << " первых элементов массива числами Фибоначчи являются " << count << " и не являются " << size - count << endl;
