@@ -7,8 +7,9 @@
 #include <ctime>
 #include <chrono>
 
-
 using namespace std;
+
+#include "input.h"
 
 HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -25,20 +26,23 @@ string curPassword;
 
 void menu();
 void menu0();
+void menu2();
 bool auth();
 int ans2();
 int ans3();
 
+// Вход и регистрация
+
 void readFromFile(string& nameCheck, string& passCheck)
 {
-	ifstream fin;
 	try
 	{
 		fin.open(path);
 		getline(fin, nameCheck);
 		getline(fin, passCheck);
+		fin.close();
 	}
-	catch (const std::exception&)
+	catch (const exception&)
 	{
 		cout << "Ошибка открытия файла" << endl;
 	}
@@ -52,8 +56,9 @@ void writeToFile(string name, string pass)
 		fout << name << endl << pass;
 		curLogin = name;
 		curPassword = pass;
+		fout.close();
 	}
-	catch (const std::exception&)
+	catch (const exception&)
 	{
 		cout << "Ошибка открытия файла" << endl;
 	}
@@ -77,7 +82,7 @@ bool check(string name, string pass)
 	string nameCheck, passCheck;
 	readFromFile(nameCheck, passCheck);
 	curLogin = nameCheck;
-	curPassword = nameCheck;
+	curPassword = passCheck;
 	if (name != nameCheck)
 	{
 		cout << "Такого пользователя не существует" << endl;
@@ -86,13 +91,14 @@ bool check(string name, string pass)
 	}
 	if (pass != passCheck)
 	{
-		cout << "Пароль введён невено" << endl;
+		cout << "Пароль введён неверно" << endl;
 		auth();
 		return false;
 	}
 	if (name == nameCheck && pass == passCheck)
 	{
 		cout << "Вы успешно авторизовались" << endl;
+		isAuth = true;
 		Sleep(1000);
 		return true;
 	}
@@ -100,82 +106,89 @@ bool check(string name, string pass)
 }
 bool auth()
 {
-	string name, pass;
-
-	cout << "Авторизация (ESC для выхода): " << endl;
-	cout << "Введите логин" << endl;
-
-	while (true) {
-		auto code = _getch();
-		if (code == 13)
-		{
-			cout << endl;
-			break;
-		}
-
-		if (code == 27)
-		{
-			menu0();
-			break;
-		}
-
-		if (code == 224)
-			_getch(),
-			code = 8;
-
-		if (code == 8)
-		{
-			cout << "\b \b";
-			if (!name.empty())
-				name.pop_back();
-		}
-		else
-		{
-			const auto ch = static_cast<char>(code);
-			name += ch;
-			cout << ch;
-		}
+	if (isAuth) {
+		cout << "Вы уже вошли в систему под именем " << curLogin << ". Повторный вход не требуется." << endl;
+		Sleep(2000);
 	}
+	else {
+		string name, pass;
 
-	cout << "Введите пароль" << endl;
+		cout << "Авторизация (ESC для выхода): " << endl;
+		cout << "Введите логин" << endl;
 
-	while (true) {
-		auto code = _getch();
-		if (code == 13)
-		{
-			cout << endl;
-			break;
+		while (true) {
+			auto code = _getch();
+			if (code == 13)
+			{
+				cout << endl;
+				break;
+			}
+
+			if (code == 27)
+			{
+				menu0();
+				break;
+			}
+
+			if (code == 224)
+				_getch(),
+				code = 8;
+
+			if (code == 8)
+			{
+				cout << "\b \b";
+				if (!name.empty())
+					name.pop_back();
+			}
+			else
+			{
+				const auto ch = static_cast<char>(code);
+				name += ch;
+				cout << ch;
+			}
 		}
 
-		if (code == 27)
-		{
-			menu0();
-			break;
+		cout << "Введите пароль" << endl;
+
+		while (true) {
+			auto code = _getch();
+			if (code == 13)
+			{
+				cout << endl;
+				break;
+			}
+
+			if (code == 27)
+			{
+				menu0();
+				break;
+			}
+
+			if (code == 224)
+				_getch(),
+				code = 8;
+
+			if (code == 8)
+			{
+				cout << "\b \b";
+				if (!pass.empty())
+					pass.pop_back();
+			}
+			else
+			{
+				const auto ch = static_cast<char>(code);
+				pass += ch;
+				cout << "*";
+			}
 		}
 
-		if (code == 224)
-			_getch(),
-			code = 8;
-
-		if (code == 8)
-		{
-			cout << "\b \b";
-			if (!pass.empty())
-				pass.pop_back();
-		}
-		else
-		{
-			const auto ch = static_cast<char>(code);
-			pass += ch;
-			cout << "*";
-		}
+		return check(name, pass);
 	}
-
-	return check(name, pass);
 }
 
+// Флаги
+
 void flag1() {
-	ifstream fin;
 	try
 	{
 		fin.open("flag1.txt");
@@ -190,16 +203,16 @@ void flag1() {
 			cout << curString << endl;
 		}
 		cout << endl << endl;
+		fin.close();
 		Sleep(1000);
 		SetConsoleTextAttribute(h, 15);
 	}
-	catch (const std::exception&)
+	catch (const exception&)
 	{
 		cout << "Ошибка открытия файла" << endl;
 	}
 }
 void flag2() {
-	ifstream fin;
 	try
 	{
 		fin.open("flag2.txt");
@@ -216,7 +229,7 @@ void flag2() {
 			}
 			cout << endl;
 		}
-
+		fin.close();
 		SetConsoleTextAttribute(h, 15);
 		cout << endl;
 		cout << "ESC для выхода в главное меню...";
@@ -226,11 +239,13 @@ void flag2() {
 		}
 
 	}
-	catch (const std::exception&)
+	catch (const exception&)
 	{
 		cout << "Ошибка открытия файла" << endl;
 	}
 }
+
+// Приветствие
 
 void getBinGroup() {
 	int i = 32;
@@ -286,6 +301,8 @@ void getBinSurname() {
 	SetConsoleTextAttribute(h, 15);
 }
 
+// Массивы
+
 void showarr(int* arr, int size)
 {
 	for (int i = 0; i < size; i++)
@@ -293,7 +310,6 @@ void showarr(int* arr, int size)
 		cout << arr[i] << " ";
 	}
 }
-
 void random(int* arr, int size)
 {
 	for (int i = 0; i < size; i++)
@@ -301,20 +317,17 @@ void random(int* arr, int size)
 		arr[i] = rand() % 100 + 1;
 	}
 }
-
 void manual(int* arr, int size)
 {
 	cout << "Введите значения: ";
 	for (int i = 0; i < size; i++)
 	{
 		cout << "Введите arr[" << i << "] ";
-		cin >> arr[i];
+		arr[i] = inputCheck();
 	}
 }
-
 void file(int* arr, int size)
 {
-	ifstream fin;
 	try
 	{
 		fin.open(patharr);
@@ -327,13 +340,13 @@ void file(int* arr, int size)
 			}
 			fin >> arr[i];
 		}
+		fin.close();
 	}
-	catch (const std::exception&)
+	catch (const exception&)
 	{
 		cout << "Ошибка открытия файла" << endl;
 	}
 }
-
 void fibbCheck(int* arr, int size)
 {
 	int count = 0;
@@ -354,10 +367,9 @@ void fibbCheck(int* arr, int size)
 		cout << "Чисел Фибоначчи среди массива нет";
 	}
 	else {
-		cout << "Из " << size << " элементов массива числами Фибоначчи являются " << count << " и не являются " << size - count << endl;
+		cout << "Из " << size << " первых элементов массива числами Фибоначчи являются " << count << " и не являются " << size - count << endl;
 	}
 }
-
 void medium(int* arr, int size) {
 	int sum = 0;
 	for (int i = 0; i < size; i++)
@@ -367,7 +379,6 @@ void medium(int* arr, int size) {
 	int medium = sum / size;
 	cout << "Среднее всех элементов массива: " << medium << endl;
 }
-
 void mediana(int* arr, int size) {
 	int mediana;
 	switch (size%2)
@@ -381,7 +392,6 @@ void mediana(int* arr, int size) {
 	}
 	cout << "Медиана массива: " << mediana << endl;
 }
-
 void moda(int* arr, int size) {
 	int rmax = 0, max = arr[0], cmax = 0;
 
@@ -505,81 +515,7 @@ void qs(int* arr, int size)
 	}
 }
 
-void menu2()
-{
-	int size;
-	cout << "Введите размерность массива" << endl;
-	cin >> size;
-	int* arr = new int[size];
-
-	int answer = ans2();
-
-	switch (answer)
-	{
-	case 0:
-		random(arr, size);
-		break;
-	case 1:
-		manual(arr, size);
-		break;
-	case 2:
-		file(arr, size);
-		break;
-	default:
-		break;
-	}
-
-	cout << "Ваш массив: ";
-	showarr(arr, size);
-	cout << endl;
-	system("pause");
-
-	answer = ans3();
-
-	auto timerStart = chrono::high_resolution_clock::now();
-	switch (answer)
-	{
-	case 0:
-		bs(arr, size);
-		break;
-	case 1:
-		shs(arr, size);
-		break;
-	case 2:
-		cs(arr, size);
-		break;
-	case 3:
-		is(arr, size);
-		break;
-	case 4:
-		qs(arr, size);
-		break;
-	default:
-		break;
-	}
-	auto timerEnd = chrono::high_resolution_clock::now();
-	chrono::duration<double, nano>;
-	double timerDur = (timerEnd - timerStart).count();
-	cout.setf(ios::fixed);
-	cout << endl << "Время работы сортировки: " << timerDur / 1000000 << " сек" << endl;
-
-	cout << "Отсортированный массив: ";
-	showarr(arr, size);
-	cout << endl << endl;
-	fibbCheck(arr, size);
-	medium(arr, size);
-	moda(arr, size);
-	mediana(arr, size);
-
-	cout << "ESC для выхода в главное меню...";
-	char code = _getch();
-	while (!(code == 27)) {
-		code = _getch();
-	}
-	menu();
-
-	delete[] arr;
-}
+// Меню
 
 int ans() {
 	int choice = 0;
@@ -701,6 +637,44 @@ int ans1() {
 	system("cls");
 	return choice;
 }
+int ans2() {
+	int choice = 0;
+	int options = 3;
+	int ch;
+	while (true) {
+		system("cls");
+		cout << "Как вы хотите заполнить массив? (ESC для выхода в главное меню)" << endl << endl;
+		choice = (choice + options) % options;
+		if (choice == 0) cout << "-> Случайно" << endl;
+		else  cout << "   Случайно" << endl;
+
+		if (choice == 1) cout << "-> Вручную" << endl;
+		else  cout << "   Вручную" << endl;
+
+		if (choice == 2) cout << "-> Прочитать из файла" << endl;
+		else  cout << "   Прочитать из файла" << endl;
+
+		ch = _getch();
+		if (ch == 224)
+		{
+			ch = _getch();
+			if (ch == 80) choice++;
+			if (ch == 72) choice--;
+		}
+		if (ch == 119)
+		{
+			choice--;
+		}
+		if (ch == 115)
+		{
+			choice++;
+		}
+		if (ch == 27) menu();
+		if (ch == 13) break;
+	}
+	system("cls");
+	return choice;
+}
 int ans3() {
 	int choice = 0;
 	int options = 5;
@@ -745,44 +719,6 @@ int ans3() {
 	system("cls");
 	return choice;
 }
-int ans2() {
-	int choice = 0;
-	int options = 3;
-	int ch;
-	while (true) {
-		system("cls");
-		cout << "Как вы хотите запонить массив? (ESC для выхода в главное меню)" << endl << endl;
-		choice = (choice + options) % options;
-		if (choice == 0) cout << "-> Случайно" << endl;
-		else  cout << "   Случайно" << endl;
-
-		if (choice == 1) cout << "-> Вручную" << endl;
-		else  cout << "   Вручную" << endl;
-
-		if (choice == 2) cout << "-> Прочитать из файла" << endl;
-		else  cout << "   Прочитать из файла" << endl;
-
-		ch = _getch();
-		if (ch == 224)
-		{
-			ch = _getch();
-			if (ch == 80) choice++;
-			if (ch == 72) choice--;
-		}
-		if (ch == 119)
-		{
-			choice--;
-		}
-		if (ch == 115)
-		{
-			choice++;
-		}
-		if (ch == 27) menu();
-		if (ch == 13) break;
-	}
-	system("cls");
-	return choice;
-}
 
 void menu0() {
 	while (true)
@@ -794,7 +730,7 @@ void menu0() {
 		reg();
 		break;
 	case 1:
-		isAuth = auth();
+		auth();
 		break;
 	}
 	menu();
@@ -804,7 +740,7 @@ void menu0() {
 void menu1() {
 	if (isAuth) {
 		cout << "Приветствую тебя, " << curLogin << ". На улице такая вьюга. Присаживайся у очага, здесь тебе всегда рады." << endl;
-		cout << "Эту программу написал студент группы 9893, Максим Голяков. Кстати, в памяти моего компьютера номер мой группы выглядит как:" << endl;
+		cout << "Эту программу написал студент группы 9893, Максим Голяков. Кстати, в памяти моего компьютера номер моей группы выглядит как:" << endl;
 		getBinGroup();
 		cout << "А фамилия как:" << endl;
 		getBinSurname();
@@ -823,11 +759,11 @@ void menu1() {
 			reg();
 			break;
 		case 1:
-			isAuth = auth();
+			auth();
 			break;
 		case 2:
 			cout << "Приветствую тебя, пользователь N. На улице такая вьюга. Присаживайся у очага, здесь тебе всегда рады." << endl;
-			cout << "Эту программу написал студент группы 9893, Максим Голяков. Кстати, в памяти моего компьютера номер мой группы выглядит как:" << endl;
+			cout << "Эту программу написал студент группы 9893, Максим Голяков. Кстати, в памяти моего компьютера номер моей группы выглядит как:" << endl;
 			getBinGroup();
 			cout << "А фамилия как:" << endl;
 			getBinSurname();
@@ -842,7 +778,81 @@ void menu1() {
 	}
 	menu();
 }
+void menu2()
+{
+	int size;
+	cout << "Введите размерность массива" << endl;
+	cin >> size;
+	int* arr = new int[size];
 
+	int answer = ans2();
+
+	switch (answer)
+	{
+	case 0:
+		random(arr, size);
+		break;
+	case 1:
+		manual(arr, size);
+		break;
+	case 2:
+		file(arr, size);
+		break;
+	default:
+		break;
+	}
+
+	cout << "Ваш массив: ";
+	showarr(arr, size);
+	cout << endl;
+	system("pause");
+
+	answer = ans3();
+
+	auto timerStart = chrono::high_resolution_clock::now();
+	switch (answer)
+	{
+	case 0:
+		bs(arr, size);
+		break;
+	case 1:
+		shs(arr, size);
+		break;
+	case 2:
+		cs(arr, size);
+		break;
+	case 3:
+		is(arr, size);
+		break;
+	case 4:
+		qs(arr, size);
+		break;
+	default:
+		break;
+	}
+	auto timerEnd = chrono::high_resolution_clock::now();
+	chrono::duration<double, nano>;
+	double timerDur = (timerEnd - timerStart).count();
+	cout.setf(ios::fixed);
+	cout << endl << "Время работы сортировки: " << timerDur / 1000000 << " сек" << endl;
+
+	cout << "Отсортированный массив: ";
+	showarr(arr, size);
+	cout << endl << endl;
+	fibbCheck(arr, size);
+	medium(arr, size);
+	moda(arr, size);
+	mediana(arr, size);
+
+	cout << "ESC для выхода в главное меню...";
+	char code = _getch();
+	while (!(code == 27)) {
+		code = _getch();
+	}
+	menu();
+
+	delete[] arr;
+}
 void menu() {
 	int answer = ans();
 	switch (answer)
@@ -886,4 +896,3 @@ int main() {
 	setlocale(LC_ALL, "russian");
 	menu();
 }
-
